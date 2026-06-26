@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { Player } from "@lottiefiles/react-lottie-player";
+import dynamic from "next/dynamic";
+
+const Player = dynamic(
+  () => import("@lottiefiles/react-lottie-player").then((mod) => mod.Player),
+  { ssr: false }
+);
 import { motion } from "framer-motion";
 
 // Define the type for the contact items
@@ -56,10 +61,10 @@ const Contact = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-            Let's Build Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Together</span>
+            Let&apos;s Build Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Together</span>
           </h2>
           <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-16">
-            I'm always open to discussing product design work or partnership opportunities. Reach out and let's create an impact.
+            I&apos;m always open to discussing product design work or partnership opportunities. Reach out and let&apos;s create an impact.
           </p>
         </motion.div>
 
@@ -82,6 +87,7 @@ const Contact = () => {
               <div className="w-16 h-16 mb-4 flex items-center justify-center relative z-10">
                 {item.animationUrl ? (
                   item.animationUrl.endsWith('.svg') ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={item.animationUrl} alt={item.name} className="w-full h-full object-contain" />
                   ) : (
                     <Player

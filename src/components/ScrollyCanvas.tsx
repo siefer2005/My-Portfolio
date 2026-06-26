@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useMotionValueEvent, MotionValue } from "framer-motion";
 
 interface ScrollyCanvasProps {
@@ -12,25 +12,7 @@ export default function ScrollyCanvas({ scrollYProgress, numFrames = 132 }: Scro
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   
-  // Preload images
-  useEffect(() => {
-    const loadedImages: HTMLImageElement[] = [];
-    for (let i = 0; i < numFrames; i++) {
-      const img = new Image();
-      // frame_000_delay-0.052s.webp
-      const frameNum = i.toString().padStart(3, "0");
-      img.src = `/sequence/frame_${frameNum}_delay-0.052s.webp`;
-      loadedImages.push(img);
-    }
-    setImages(loadedImages);
-    
-    // Draw first frame once loaded
-    loadedImages[0].onload = () => {
-      renderFrame(0, loadedImages);
-    };
-  }, [numFrames]);
-
-  const renderFrame = (index: number, imgArray: HTMLImageElement[]) => {
+  const renderFrame = useCallback((index: number, imgArray: HTMLImageElement[]) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -71,7 +53,27 @@ export default function ScrollyCanvas({ scrollYProgress, numFrames = 132 }: Scro
 
     ctx.clearRect(0, 0, rect.width, rect.height);
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-  };
+  }, []);
+  // Preload images
+  useEffect(() => {
+    const loadedImages: HTMLImageElement[] = [];
+    for (let i = 0; i < numFrames; i++) {
+      const img = new Image();
+      // frame_000_delay-0.052s.webp
+      const frameNum = i.toString().padStart(3, "0");
+      img.src = `/sequence/frame_${frameNum}_delay-0.052s.webp`;
+      loadedImages.push(img);
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setImages(loadedImages);
+    
+    // Draw first frame once loaded
+    loadedImages[0].onload = () => {
+      renderFrame(0, loadedImages);
+    };
+  }, [numFrames, renderFrame]);
+
+
 
   // Sync scroll to frame
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -99,7 +101,7 @@ export default function ScrollyCanvas({ scrollYProgress, numFrames = 132 }: Scro
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [images, numFrames, scrollYProgress]);
+  }, [images, numFrames, scrollYProgress, renderFrame]);
 
   return (
     <canvas
