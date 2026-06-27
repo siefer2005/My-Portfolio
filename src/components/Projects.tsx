@@ -11,6 +11,7 @@ const projects = [
     category: "Mobile Application",
     description: "A comprehensive, accessible, and beautiful design system built for the modern app.",
     image: "/dating-app.png",
+    link: "https://github.com/voip8pbx/DatingApp",
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ const projects = [
     category: "Web Application",
     description: "Built a full-stack creator platform enabling users to share posts, host live streams, interact through real-time chat, and manage subscriptions with a modern responsive interface.",
     image: "/mingoo-live.png",
+    link: "https://github.com/Ainsleyalma10/Mingoo",
   },
   {
     id: 3,
@@ -32,6 +34,7 @@ const projects = [
     category: "Moblie Application (Kotlin)",
     description: "A creative mobile game with multiplayer support.",
     image: "/tic-tac-toe.png",
+    link: "https://github.com/siefer2005/Tic-Tac-Toe",
   }
 ];
 
@@ -56,6 +59,7 @@ export default function Projects() {
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
+              onClick={() => project.link && window.open(project.link, '_blank', 'noopener,noreferrer')}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
